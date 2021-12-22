@@ -1,0 +1,16 @@
+title = "Endure configuration"
+
+[main]
+# Whether files not present in the source folder are removed from S3 on backup.
+remove_missing_files = false
+# How often a job should run if not specified (corresponds to values in schedules.toml)
+default_interval = "weekly"
+
+[aws]
+# Note that Endure does not manage AWS Credentials, they should be handled by your environment.
+region = "us-east-1"
+# Valid choices are: STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE | GLACIER_IR
+# Note that an individual backup job can override this default storage class
+storage_class = "DEEP_ARCHIVE"
+bucket = "my-s3-bucket"
+prefix = "/path/to/backup/destination"

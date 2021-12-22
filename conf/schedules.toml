@@ -1,0 +1,62 @@
+# Please note this currently uses a very simple cron-like system.
+# Cron expressions like `@daily` aren't supported.
+
+[[schedule]]
+name = "hourly"
+expr = "5 * * * *"
+
+[[schedule]]
+name = "daily"
+expr = "0 3 * * *"
+
+[[schedule]]
+name = "weekdays"
+expr = "0 3 * * 1-5"
+
+[[schedule]]
+name = "weekly"
+expr = "0 3 * * 0"
+
+[[schedule]]
+name = "monthly"
+expr = "0 3 1 * *"
+
+[[schedule]]
+name = "every_five_minutes"
+expr = "*/5 * * * *"
+
+[[schedule]]
+name = "mondays"
+expr = "0 3 * * 1"
+
+[[schedule]]
+name = "tuesdays"
+expr = "0 3 * * 2"
+
+[[schedule]]
+name = "wednesdays"
+expr = "0 3 * * 3"
+
+[[schedule]]
+name = "thursdays"
+expr = "0 3 * * 4"
+
+[[schedule]]
+name = "fridays"
+expr = "0 3 * * 5"
+
+[[schedule]]
+name = "saturdays"
+expr = "0 3 * * 6"
+
+[[schedule]]
+name = "sundays"
+expr = "0 3 * * 0"
+
+[[schedule]]
+name = "biweekly"
+expr = "0 3 */14 * *"
+
+[[schedule]]
+name = "fortnightly"
+expr = "0 3 */14 * *"
