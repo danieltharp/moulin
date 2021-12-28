@@ -6,6 +6,10 @@ title = "Backup configuration"
     schedule = "daily"
     # Overriding the default storage class from config.toml
     storage_class = "GLACIER_IR"
+    # Overriding the bucket to use
+    bucket = "emergency-fire-safe"
+    # Overriding the region
+    region = "us-east-2"
 
     [backups.profile]
     path = "U:/User Profile"

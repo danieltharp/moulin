@@ -13,4 +13,5 @@ region = "us-east-1"
 # Note that an individual backup job can override this default storage class
 storage_class = "DEEP_ARCHIVE"
 bucket = "my-s3-bucket"
+# Leading and trailing slashes are optional
 prefix = "/path/to/backup/destination"
