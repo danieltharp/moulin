@@ -1,3 +1,2 @@
 toml
-boto3
 cron-validator

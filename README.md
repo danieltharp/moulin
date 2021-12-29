@@ -3,4 +3,5 @@
 
 * Compatible with Windows and Linux
 * Flexible TOML-driven state
-* Customized frequency and storage class capability for each file/folder in scope 
+* Customized frequency and storage class capability for each file/folder in scope
+* Requires AWSCLI v2 installed and on PATH

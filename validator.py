@@ -1,8 +1,10 @@
 from os import path
+
+from cron_validator import CronValidator
 import toml
 import re
 
-def validate(verbose=False):
+def validate_configs(verbose=False):
     print("Validating config...")
 
     if verbose is True: print("Checking for existence of all required files...")
@@ -24,19 +26,17 @@ def validate(verbose=False):
         schedule_toml = toml.load(f)
         if verbose is True: print('Successfully passed conf/schedules.toml to TOML parser...')
     if not 'schedule' in schedule_toml:
-        raise IndexError('At least one [[schedule]] block must be defined in conf/schedules.conf!')
+        raise IndexError('At least one [schedule] block must be defined in conf/schedules.conf!')
     if verbose is True: print(f'Found {str(len(schedule_toml["schedule"]))} schedule items...')
     toml_safe_name = re.compile("^[a-zA-Z0-9_-]*$")
-    valid_cron = re.compile("^(((\d){1,2}|\*|\*/(\d){1,2}|\d+-\d+)\s?){5}$")
-    schedule_names = []
+    schedule_names = list(schedule_toml['schedule'].keys())
     for schedule in schedule_toml['schedule']:
-        if verbose is True: print(f'Processing {schedule["name"]} name field...')
-        if toml_safe_name.match(schedule['name']) is None:
+        if verbose is True: print(f'Processing {schedule} name field...')
+        if toml_safe_name.match(schedule) is None:
             raise ValueError('Invalid name. Valid values: Uppercase and lowercase letters, numbers, dash, underscore.')
-        if verbose is True: print(f'Processing {schedule["name"]} cron expression...')
-        if valid_cron.match(schedule['expr']) is None:
-            raise ValueError('Invalid cron syntax. Only a limited subset of cron is currently supported: Numbers, ranges, intervals, and asterisks.')
-        schedule_names.append(schedule['name'])
+        if verbose is True: print(f'Processing {schedule} cron expression...')
+        if CronValidator.parse(schedule_toml['schedule'][schedule]['expr']) is None:
+            raise ValueError('Invalid cron syntax.')
     if verbose is True: print('Schedule file is valid!')
 
     if verbose is True: print('Inspecting conf/config.toml...')
@@ -137,3 +137,42 @@ def validate(verbose=False):
                 raise ValueError(f'The remove_missing_files statement for [backups.{key}] must be a bool.')
     if verbose is True: print("Backups file is valid!")
     print("All files are valid!")
+
+def parse_job(job_name, verbose=True):
+    job = {}
+    # We need to know a number of things to feed to AWS: bucket, prefix, region, path, remove_missing_files, storage_class, include, and exclude.
+    with open('conf/backups.toml', 'r') as f:
+        backups_toml = toml.load(f)
+        if verbose is True: print('Successfully passed conf/backups.toml to TOML parser...')
+    with open('conf/config.toml', 'r') as f:
+        config_toml = toml.load(f)
+        if verbose is True: print('Successfully passed conf/config.toml to TOML parser...')
+    job['region'] = backups_toml['backups'][job_name].get('region', config_toml['aws']['region'])
+    job['bucket'] = backups_toml['backups'][job_name].get('bucket', config_toml['aws']['bucket'])
+    job['prefix'] = backups_toml['backups'][job_name].get('prefix', config_toml['aws'].get('prefix', '/'))
+    job['storage_class'] = backups_toml['backups'][job_name].get('storage_class', config_toml['aws']['storage_class'])
+    job['remove_missing_files'] = backups_toml['backups'][job_name].get('remove_missing_files', config_toml['aws'].get('remove_missing_files', False))
+    job['path'] = backups_toml['backups'][job_name]['path']
+    job['include'] = backups_toml['backups'][job_name].get('include', None)
+    job['exclude'] = backups_toml['backups'][job_name].get('exclude', None)
+    # We also need to know the order of include vs. exclude
+    # Neither one being present is the same as include *, exclude none.
+    if not job['include'] and not job['exclude']:
+        job['first_filter'] = 'include'
+        job['include'] = ['*']
+    # A missing exclude statement should be handled as exclude *, include the contents of the var
+    if job['include'] and not job['exclude']:
+        job['first_filter'] = 'exclude'
+        job['exclude'] = ['*']
+    # A missing include statement should be the inverse, include * and exclude the contents of the var
+    if job['exclude'] and not job['include']:
+        job['first_filter'] = 'include'
+        job['include'] = ['*']
+    # Finally, both being present means we need to follow the order specified in the TOML file.
+    # Thankfully, updates to python 3 preserve the order of dicts when loaded by the toml library.
+    if job['include'] and job['exclude']:
+        if list(backups_toml['backups'][job_name]).index('include') < list(backups_toml['backups'][job_name]).index('exclude'):
+            job['first_filter'] = 'include'
+        else:
+            job['first_filter'] = 'exclude'
+    return job
