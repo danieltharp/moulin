@@ -1,7 +1,6 @@
 import argparse
 import toml
 import cron_validator
-import boto3
 import validator
 import scheduler
 import runner

@@ -1,5 +1,5 @@
-import toml
 import validator
+import os
 
 def run(job_name, verbose=True, dryrun=True):
     if verbose is True: print(f'Validating {job_name} job prior to run...')
@@ -40,4 +40,6 @@ def run(job_name, verbose=True, dryrun=True):
         cmd += ' --delete true'
     if dryrun:
         # `aws s3 sync /home/bluesoul/scripts s3://my-s3-bucket/scripts/ --exclude "*" --include "*.py" --include "*.sh" --storage-class STANDARD_IA --delete true --dry-run`
-        cmd += ' --dry-run'
+        cmd += ' --dryrun'
+    print(cmd)
+    os.system(cmd)

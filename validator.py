@@ -157,20 +157,20 @@ def parse_job(job_name, verbose=True):
     job['exclude'] = backups_toml['backups'][job_name].get('exclude', None)
     # We also need to know the order of include vs. exclude
     # Neither one being present is the same as include *, exclude none.
-    if not job['include'] and not job['exclude']:
+    if job['include'] is None and job['exclude'] is None:
         job['first_filter'] = 'include'
         job['include'] = ['*']
     # A missing exclude statement should be handled as exclude *, include the contents of the var
-    if job['include'] and not job['exclude']:
+    elif job['include'] is not None and job['exclude'] is None:
         job['first_filter'] = 'exclude'
         job['exclude'] = ['*']
     # A missing include statement should be the inverse, include * and exclude the contents of the var
-    if job['exclude'] and not job['include']:
+    elif job['exclude'] is not None and job['include'] is None:
         job['first_filter'] = 'include'
         job['include'] = ['*']
     # Finally, both being present means we need to follow the order specified in the TOML file.
     # Thankfully, updates to python 3 preserve the order of dicts when loaded by the toml library.
-    if job['include'] and job['exclude']:
+    else:
         if list(backups_toml['backups'][job_name]).index('include') < list(backups_toml['backups'][job_name]).index('exclude'):
             job['first_filter'] = 'include'
         else:
