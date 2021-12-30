@@ -9,7 +9,7 @@ def run(job_name, verbose=True, dryrun=True):
     # `aws s3 sync `
     cmd = "aws s3 sync "
     # `aws s3 sync /home/bluesoul/scripts s3://my-s3-bucket`
-    cmd += job['path'] + ' s3://' + job['bucket']
+    cmd += '"' + job['path'] + '" "s3://' + job['bucket']
     if job['prefix'][0] != '/':
         # `aws s3 sync /home/bluesoul/scripts s3://my-s3-bucket/`
         cmd += '/'
@@ -18,6 +18,7 @@ def run(job_name, verbose=True, dryrun=True):
     if job['prefix'][-1] != '/':
         # `aws s3 sync /home/bluesoul/scripts s3://my-s3-bucket/scripts/`
         cmd += '/'
+    cmd += '"'
     if job['first_filter'] == 'include':
         for inc in job['include']:
             # `aws s3 sync /home/bluesoul/scripts s3://my-s3-bucket/scripts/ --include "*.py" --include "*.sh`

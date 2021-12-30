@@ -149,10 +149,10 @@ def parse_job(job_name, verbose=True):
         if verbose is True: print('Successfully passed conf/config.toml to TOML parser...')
     job['region'] = backups_toml['backups'][job_name].get('region', config_toml['aws']['region'])
     job['bucket'] = backups_toml['backups'][job_name].get('bucket', config_toml['aws']['bucket'])
-    job['prefix'] = backups_toml['backups'][job_name].get('prefix', config_toml['aws'].get('prefix', '/'))
     job['storage_class'] = backups_toml['backups'][job_name].get('storage_class', config_toml['aws']['storage_class'])
     job['remove_missing_files'] = backups_toml['backups'][job_name].get('remove_missing_files', config_toml['aws'].get('remove_missing_files', False))
     job['path'] = backups_toml['backups'][job_name]['path']
+    job['prefix'] = backups_toml['backups'][job_name].get('prefix', config_toml['aws'].get('prefix', job['path'].split('/')[-1]))
     job['include'] = backups_toml['backups'][job_name].get('include', None)
     job['exclude'] = backups_toml['backups'][job_name].get('exclude', None)
     # We also need to know the order of include vs. exclude
