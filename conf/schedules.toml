@@ -1,0 +1,47 @@
+# Please note this currently uses a very simple cron-like system.
+# Cron expressions like `@daily` aren't supported.
+[schedule]
+    [schedule.hourly]
+    expr = "5 * * * *"
+    
+    [schedule.daily]
+    expr = "0 3 * * *"
+    
+    [schedule.weekdays]
+    expr = "0 3 * * 1-5"
+    
+    [schedule.weekly]
+    expr = "0 3 * * 0"
+    
+    [schedule.monthly]
+    expr = "0 3 1 * *"
+    
+    [schedule.every_five_minutes]
+    expr = "*/5 * * * *"
+    
+    [schedule.mondays]
+    expr = "0 3 * * 1"
+    
+    [schedule.tuesdays]
+    expr = "0 3 * * 2"
+    
+    [schedule.wednesdays]
+    expr = "0 3 * * 3"
+    
+    [schedule.thursdays]
+    expr = "0 3 * * 4"
+    
+    [schedule.fridays]
+    expr = "0 3 * * 5"
+    
+    [schedule.saturdays]
+    expr = "0 3 * * 6"
+    
+    [schedule.sundays]
+    expr = "0 3 * * 0"
+    
+    [schedule.biweekly]
+    expr = "0 3 */14 * *"
+    
+    [schedule.fortnightly]
+    expr = "0 3 */14 * *"

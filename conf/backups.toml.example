@@ -1,0 +1,30 @@
+title = "Backup configuration"
+[backups]
+    [backups.firesafe]
+    path = "U:/Fire Safe"
+    # Overriding the default schedule from config.toml
+    schedule = "daily"
+    # Overriding the default storage class from config.toml
+    storage_class = "GLACIER_IR"
+    # Overriding the bucket to use
+    bucket = "emergency-fire-safe"
+    # Overriding the region
+    region = "us-east-2"
+
+    [backups.profile]
+    path = "U:/User Profile"
+    # Specifying the folder name to use in the destination bucket instead of the last part of the folder name
+    destination = "myprofile"
+    # Note that include and exclude statements are evaluated top to bottom, and you could easily exclude the entire
+    # path if done incorrectly.
+    # See https://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters
+    exclude = ["*"]
+    include = [
+        "Desktop/*",
+        "Downloads/*",
+        "My Documents/*",
+        "Legacy Documents/*",
+        "My Music/*",
+        "My Pictures/*",
+        "My Videos/*"
+    ]
